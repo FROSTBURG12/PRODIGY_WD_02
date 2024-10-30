@@ -1,0 +1,66 @@
+// Selecting the timer elements
+const hoursEl = document.getElementById("hours");
+const minutesEl = document.getElementById("minutes");
+const secondsEl = document.getElementById("seconds");
+const millisecondsEl = document.getElementById("milliseconds");
+
+// Selecting the control buttons
+const startButton = document.getElementById("start");
+const stopButton = document.getElementById("stop");
+const resetButton = document.getElementById("reset");
+
+let startTime = 0;
+let elapsedTime = 0;
+let timerInterval = null;
+let isRunning = false;
+
+// Helper function to pad numbers with leading zeros
+function pad(number, digits = 2) {
+    return number.toString().padStart(digits, '0');
+}
+
+// Function to update the stopwatch display
+function updateDisplay() {
+    const hours = Math.floor((elapsedTime / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((elapsedTime / (1000 * 60)) % 60);
+    const seconds = Math.floor((elapsedTime / 1000) % 60);
+    const milliseconds = Math.floor(elapsedTime % 1000);
+
+    hoursEl.textContent = pad(hours);
+    minutesEl.textContent = pad(minutes);
+    secondsEl.textContent = pad(seconds);
+    millisecondsEl.textContent = pad(milliseconds, 3); // 3 digits for milliseconds
+}
+
+// Function to start the stopwatch
+function startStopwatch() {
+    if (!isRunning) {
+        startTime = Date.now() - elapsedTime;
+        timerInterval = setInterval(() => {
+            elapsedTime = Date.now() - startTime;
+            updateDisplay();
+        }, 10); // Update every 10 milliseconds
+        isRunning = true;
+    }
+}
+
+// Function to stop the stopwatch
+function stopStopwatch() {
+    if (isRunning) {
+        clearInterval(timerInterval);
+        isRunning = false;
+    }
+}
+
+// Function to reset the stopwatch
+function resetStopwatch() {
+    clearInterval(timerInterval);
+    isRunning = false;
+    elapsedTime = 0;
+    updateDisplay();
+}
+
+// Event listeners for the buttons
+startButton.addEventListener("click", startStopwatch);
+stopButton.addEventListener("click", stopStopwatch);
+resetButton.addEventListener("click", resetStopwatch);
